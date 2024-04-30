@@ -3,6 +3,10 @@
     padding: 0;
     box-sizing: border-box;
 }
+
+::-webkit-scrollbar{
+    display: none;
+}
 img{
     width: 50px;
     height: 50px;
@@ -81,7 +85,7 @@ input::placeholder{
 }
 
 #surahName{
-    width: 300px;
+    width: 380px;
     border-radius: 20px;
     background-color: #ffffff;
     display: flex;
@@ -89,6 +93,8 @@ input::placeholder{
     align-items: center;
     gap: 20px;
     padding: 20px 10px;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 #oyat_nomi{
     width: 100%;
@@ -106,4 +112,30 @@ input::placeholder{
     display: flex;
     flex-direction: column;
     gap: 20px;
+}
+
+
+.surah{
+    width: 100%;
+    height: 200px;
+    border-radius: 10px;
+    background-color: rgb(199, 248, 237);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+}
+#id{
+    min-width: 30px ;
+    aspect-ratio: 1/1;
+    background-color: rgb(1, 78, 1);
+    border-radius: 2px;
+    transform: rotate(45deg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#idsurah{
+    transform: rotate(-45deg);
 }

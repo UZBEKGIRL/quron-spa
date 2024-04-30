@@ -11,6 +11,10 @@ let container = document.createElement("div");
 container.setAttribute("id", "cont");
 container.setAttribute("class", "mode");
 
+let DATA = null;
+
+let surahData = {}
+
 
 
 NavObject = {
@@ -292,6 +296,9 @@ function homeFun(){
     let searchIcon = document.createElement('div');
     let icon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg>`;
     searchIcon.innerHTML = icon;
+    searchIcon.style.width = "20px";
+    searchIcon.style.height = "20px";
+    searchIcon.style.fill = 'black';
     let input  = document.createElement("input");
     input.setAttribute("class", 'mode');
     input.placeholder = 'Search by Surah name';
@@ -303,7 +310,67 @@ function homeFun(){
     surahName.append(search);
     surahName.setAttribute("class", 'mode');
     surahName.setAttribute("id", 'surahName');
+    getdata("");
 
+    getoyat(1);
+    
+    container.append(surahName);
+    container.style.backgroundColor = "lightgrey";
+}
+function getdata(str){
+    fetch(`http://api.alquran.cloud/v1/surah`)
+    .then(res => res.json())
+    .then( data => {
+        surah(data.data);
+        DATA = data.data;
+
+    })
+};
+function getoyat(id){
+   
+  if (surahData[id]) {
+    console.log("data bor");
+    console.log(surahData[id]);
+    oyatlarFun(id);
+  }else{
+    console.log("data yoq");
+    getdataoyat(id);
+  }
+}
+function getdataoyat(str){
+
+    fetch(`http://api.alquran.cloud/v1/surah/${str}`)
+    .then(res => res.json())
+    .then( data => {
+        console.log(data.data);
+        surahData[str] = data.data;
+        oyatlarFun(str);
+    })
+}
+
+function oyatlarFun(id) {
+    let data = surahData[id]
+    console.log( surahData[id],"lorem",id);
+    let oyatlar1 = document.getElementById('oyatlar');
+    if(oyatlar1 !== null ){
+        oyatlar1.removeChild(oyatlar1.firstChild);
+        let nomi = document.createElement('div');
+        nomi.setAttribute('id',"oyat_nomi");
+        nomi.setAttribute("class", 'mode');
+        let h1 = document.createElement('h1');
+        let p = document.createElement('p');
+        h1.textContent = data.englishName;
+        h1.setAttribute("class", 'modeword');
+        p.setAttribute("class", 'modeword');
+        p.textContent = data.name;
+        console.log(p);
+        nomi.append(h1);
+        nomi.append(p);
+        oyatlar1.append(nomi);
+        container.append(oyatlar1);
+        
+
+    }else{ 
     let oyatlar = document.createElement("div");
     oyatlar.setAttribute("id", 'oyatlar');
     let nomi = document.createElement('div');
@@ -311,15 +378,60 @@ function homeFun(){
     nomi.setAttribute("class", 'mode');
     let h1 = document.createElement('h1');
     let p = document.createElement('p');
-    h1.textContent = 'Al-Fatihah';
+    h1.textContent = data.englishName;
     h1.setAttribute("class", 'modeword');
     p.setAttribute("class", 'modeword');
-    p.textContent = 'Ayab-7, Makkah';
+    p.textContent = data.name;
+    console.log(p);
     nomi.append(h1);
     nomi.append(p);
     oyatlar.append(nomi);
-
-    container.append(surahName);
     container.append(oyatlar);
-    container.style.backgroundColor = "lightgrey";
+    }
+    console.log(data);
+}
+
+function surah(data){
+    for (let i = 0; i < data.length; i++) {
+        let div = document.createElement("div");
+        div.setAttribute("class", 'mode');
+        div.classList.add('surah');
+        div.setAttribute("id", `s${i}`);
+
+        let id = document.createElement("p");
+        id.textContent = i + 1;
+        id.setAttribute("id", 'idsurah');
+        id.setAttribute("class", 'modeword');
+        let divid = document.createElement("div");
+        divid.setAttribute("id", 'id');
+        divid.append(id);
+        div.append(divid);
+
+        let div2 = document.createElement("div");
+        let p = document.createElement("p");
+        p.style.fontSize = "14px";
+        let h1 = document.createElement("h4");
+        h1.style.width = "120px";
+        h1.setAttribute('class', 'modeword');
+        p.setAttribute('class', 'modeword');
+        h1.textContent = data[i].englishName;
+        p.textContent = data[i].englishNameTranslation;
+        div2.append(h1);
+        div2.append(p);
+        div.append(div2);
+
+        let h2 = document.createElement("h4");
+        h2.setAttribute('class', 'modeword');
+        h2.textContent = data[i].name;
+        div.append(h2);
+
+        div.addEventListener('click', ()=>{
+            localStorage.setItem("sura", `${i+1}`);
+            getoyat(data[i].number);
+            
+        })
+
+        let surah = document.getElementById("surahName");
+        surah.append(div);
+    }
 }
